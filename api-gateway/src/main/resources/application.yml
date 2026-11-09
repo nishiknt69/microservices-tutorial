@@ -1,3 +1,6 @@
+jwt:
+  secretKey: ailkjsfdlidsaojifaelkjdsfijoeafijofalfssboisdfjiodsflosdoiklsdlk
+
 spring:
   application:
     name: api-gateway
@@ -8,11 +11,15 @@ spring:
         webflux:
           routes:
             - id: orderService
-              uri: lb://ORDERSERVICE
+              uri: http://localhost:9020
               predicates:
                 - Path=/api/v1/orders/**
               filters:
                 - StripPrefix=2
+                - name: LoggingOrderFilter
+                - name: Authentication
+                  args:
+                    isEnabled: true
 
             - id: inventoryService
               uri: lb://INVENTORYSERVICE
@@ -21,6 +28,7 @@ spring:
               filters:
                 - StripPrefix=2
                 - AddRequestHeader=X-Custom-Header, Anuj
+                - name: Authentication
 eureka:
   client:
     service-url:
